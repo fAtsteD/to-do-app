@@ -1,0 +1,25 @@
+{# Form of subtask that has to be used in edit task form #}
+
+
+<div class="form-row">
+    <div class="col-1">
+        <div class="custom-control custom-checkbox">
+            {{ form_row(editTaskForm.subtasks.vars.prototype.isDone, {
+                "label": " ",
+                "attr":{
+                    "class": "custom-control-input"
+                },
+                "label_attr": {
+                    "class": "custom-control-label"
+                }
+            }) }}
+        </div>
+    </div>
+    
+    <div class="form-group col">
+        {{ form_row(editTaskForm.subtasks.vars.prototype.title, {"attr": {
+            "class": "form-control",
+            "placeholder": "What to do"
+        }}) }}
+    </div>
+</div>

@@ -1,0 +1,22 @@
+{# Main page of app #}
+
+{% extends 'layouts/base.html.twig'%}
+
+{% block title %}
+    Name of list
+{% endblock %}
+
+{% block body %}
+    <h3 class="text-center">Name of list</h3>
+
+    {# Add to do form #}
+    {{ include("todo/inc/addTaskForm.html.twig") }}
+    
+    {# Tasks with button for delete and edit #}
+    {{ include("todo/inc/tasks.html.twig") }}
+    
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{% if mainPageJS is defined %}{{ mainPageJS }}{% endif %}"></script>
+{% endblock %}

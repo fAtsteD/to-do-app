@@ -1,0 +1,80 @@
+{# Form of editting all fields of task. #}
+
+{{ form_start(editTaskForm, {'method': 'POST'}) }}
+    <div class="form-row">
+        <div class="col-1">
+            <div class="custom-control custom-checkbox">
+                {{ form_row(editTaskForm.isDone, {
+                    'label': ' ',
+                    'attr':{
+                        'class': 'custom-control-input'
+                    },
+                    'label_attr': {
+                        'class': 'custom-control-label'
+                    }
+                }) }}
+            </div>
+        </div>
+        
+        <div class="form-group col">
+            {{ form_row(editTaskForm.title, {'attr': {
+            'class': 'form-control',
+            'placeholder': 'What to do'
+            }}) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        {{ form_row(editTaskForm.dueDate, {'attr':{
+            'class': 'form-control'
+        }}) }}{{ form_row(editTaskForm.dueDate, {'attr':{
+            'class': 'form-control'
+        }}) }}
+    </div>
+
+    <div class="form-group">
+        <ul class="subtasks list-unstyled" data-prototype='{{ include('todo/editTask/inc/editSubtaskForm.html.twig') }}'>
+            {% for subtask in editTaskForm.subtasks %}
+                <li>
+                    <div class="form-row">
+                        <div class="col-1">
+                            <div class="custom-control custom-checkbox">
+                                {{ form_row(subtask.isDone, {
+                                    "label": " ",
+                                    "attr":{
+                                        "class": "custom-control-input"
+                                    },
+                                    "label_attr": {
+                                        "class": "custom-control-label"
+                                    }
+                                }) }}
+                            </div>
+                        </div>
+                        
+                        <div class="form-group col">
+                            {{ form_row(subtask.title, {"attr": {
+                                "class": "form-control",
+                                "placeholder": "What to do"
+                            }}) }}
+                        </div>
+
+                        
+                        <div class="col-1">
+                            <button type="button" class="remove-subtask btn btn-danger">X</button>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="form-group">
+        {{ form_row(editTaskForm.description, {'attr':{
+            'class': 'form-control'
+        }}) }}
+    </div>
+
+    {{ form_row(editTaskForm.save, {'attr':{
+        'class': 'btn btn-primary float-right'
+    }}) }}
+{{ form_end(editTaskForm) }}

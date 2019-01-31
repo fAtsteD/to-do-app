@@ -1,0 +1,20 @@
+{# Main file for output of editing task. #}
+
+{% extends 'layouts/base.html.twig'%}
+
+{% block title %}
+    Edit task
+{% endblock %}
+
+{% block body %}
+    <h3>Edit task</h3>
+
+    {{ include('todo/editTask/inc/editTaskForm.html.twig') }}
+
+    
+    <a href="https://www.w3schools.com/howto/howto_css_custom_checkbox.asp">Custom checkbox</a>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{% if editTaskJS is defined %}{{ editTaskJS }}{% endif %}"></script>
+{% endblock %}
