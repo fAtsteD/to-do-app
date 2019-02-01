@@ -72,7 +72,8 @@ class TodoController extends Controller
             ->getManager();
         $repository = $documentManager->getRepository(Task::class);
 
-        if ($task = $repository->findOneById($id) == null) {
+        $task = $repository->findOneById($id);
+        if ($task == null) {
             throw $this->createNewFoundException('The task does not exist');
         }
 
@@ -126,6 +127,58 @@ class TodoController extends Controller
                 'code' => 0,
                 'message' => 'The task is deleted.'
             ]);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Set done/undone through json request
+     * 
+     * The action is for main page mainly. Request has to be JSON type and have field isDone.
+     *
+     * @param Request $request
+     * @param string $id
+     * @return Response
+     * 
+     * @Route("check/{id}", name="check_task")
+     * @Method({"POST"})
+     */
+    public function taskDone(Request $request, string $id)
+    {
+        if ($request->getContentType() == "json") {
+            $response = new JsonResponse([
+                'code' => 2,
+                'message' => 'Wrong content type.'
+            ]);
+        } else {
+            $documentManager = $this->get('doctrine_mongodb')
+                ->getManager();
+            $task = $documentManager->getRepository(Task::class)->findOneById($id);
+
+            if ($task == null) {
+                $response = new JsonResponse([
+                    'code' => 1,
+                    'message' => 'The task is not found.'
+                ]);
+            } else {
+                $reqIsDone = json_decode($request->getContent(), true);
+                if (is_bool($reqIsDone["isDone"])) {
+                    $task->setIsDone($reqIsDone["isDone"]);
+                    $documentManager->persist($task);
+                    $documentManager->flush();
+
+                    $response = new JsonResponse([
+                        'code' => 0,
+                        'message' => 'The task is done/undone.'
+                    ]);
+                } else {
+                    $response = new JsonResponse([
+                        'code' => 3,
+                        'message' => 'Wrong data.'
+                    ]);
+                }
+            }
         }
 
         return $response;

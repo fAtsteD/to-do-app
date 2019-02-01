@@ -1,13 +1,19 @@
 {# Render list of tasks with buttons edit and delete #}
 
 <h4>I have to do</h4>
-<ul class="list-unstyled">
+<ul id="undone-tasks" class="list-unstyled">
     {% for item in tasks %}
         {% if item.isDone == false %}
             <li>
                 <div class="row">
+                    <div class="col-1">
+                        <label class="container-checkbox-task">
+                            <input type="checkbox" class="check-task" data-task-id="{{ item.id }}">
+                            <span class="checkmark-task form-control"></span>
+                        </label>
+                    </div>
                     <div class="col">
-                        <a href="{{ path('edit_task', {'id': item.id}) }}" class="btn btn-outline-success col">{{ item.title }}</a>
+                        <a href="{{ path('edit_task', {'id': item.id}) }}" class="btn btn-outline-dark text-left col">{{ item.title }}</a>
                     </div>
                     <div class="col-1">
                         <button type="button" class="remove-task btn btn-outline-danger" data-task-id="{{ item.id }}">X</button>
@@ -18,13 +24,19 @@
     {% endfor %}
 </ul>
 <h4>I have done</h4>
-<ul class="list-unstyled">
+<ul id="done-tasks" class="list-unstyled">
     {% for item in tasks %}
         {% if item.isDone == true %}
             <li>
                 <div class="row">
+                    <div class="col-1">
+                        <label class="container-checkbox-task">
+                            <input type="checkbox" class="check-task" data-task-id="{{ item.id }}" checked>
+                            <span class="checkmark-task form-control"></span>
+                        </label>
+                    </div>
                     <div class="col">
-                        <a href="{{ path('edit_task', {'id': item.id}) }}" class="btn btn-outline-success col">{{ item.title }}</a>
+                        <a href="{{ path('edit_task', {'id': item.id}) }}" class="btn btn-outline-dark text-left col">{{ item.title }}</a>
                     </div>
                     <div class="col-1">
                         <button type="button" class="remove-task btn btn-outline-danger" data-task-id="{{ item.id }}">X</button>

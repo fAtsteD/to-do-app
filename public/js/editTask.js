@@ -2,7 +2,7 @@
 // Add and delete subtasks.
 
 var collectionHolder = $('ul.subtasks');
-var addSubtasksButton = $('<button type="button" id="add_subtask_link" class="btn btn-outline-success">Add a subtask</button>');
+var addSubtasksButton = $('<button type="button" id="add_subtask_link" class="btn btn-outline-success">+</button>');
 var newLinkLi = $('<li></li>').append(addSubtasksButton);
 
 $(() => {

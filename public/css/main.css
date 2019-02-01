@@ -1,0 +1,68 @@
+/* Main css file for app
+File have to be used everywhere in the app. */
+
+/* Style for checkbox for every task */
+
+/* The container */
+.container-checkbox-task {
+  display: block;
+  position: relative;
+  width:2.3rem;
+  min-width:2rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container-checkbox-task input {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+/* Custom checkbox */
+.checkmark-task {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* On mouse-over */
+.container-checkbox-task:hover input ~ .checkmark-task {
+  background-color: #3498db4a;
+}
+
+/* When the checkbox is checked */
+.container-checkbox-task input:checked ~ .checkmark-task {
+  background-color: #3498db4a;
+}
+
+/* Create the checkmark indicator (hidden when not checked) */
+.checkmark-task:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container-checkbox-task input:checked ~ .checkmark-task:after {
+  display: block;
+}
+
+/* Style the checkmark indicator */
+.container-checkbox-task .checkmark-task:after {
+  left: 0.5rem;
+  top: 0rem;
+  width: 48%;
+  height: 2rem;
+  border: solid #1212128f;
+  border-width: 0 6px 6px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+
