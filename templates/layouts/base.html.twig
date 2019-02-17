@@ -9,6 +9,33 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <a href="/" class="navbar-brand">To Do App</a>
+            
+            <h4 class="navbar-text mx-auto">{{ block('title') }}</h4>
+                
+            <div class="float-right">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav">
+                        {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                            <li class="nav-item ml-auto">
+                                <a href="{{ path('app_login') }}" class="nav-link">Sign in</a>
+                            </li>
+                            <li class="nav-item ml-auto">
+                                <a href="{{ path('registrate') }}" class="nav-link">Sign up</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item ml-auto">
+                                <a href="{{ path('app_logout') }}" class="nav-link">Log out {{ app.user.username }}</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
         <div class="container">
             {% block body %}{% endblock %}
         </div>

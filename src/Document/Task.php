@@ -70,7 +70,6 @@ class Task
      *
      * @ODM\Field(type="date")
      * @Assert\DateTime
-     * @Assert\IsNull
      */
     protected $dueDate;
 
@@ -92,6 +91,8 @@ class Task
         $this->createdAt = new \DateTime();
     }
 
+    // GETTERS
+
     public function getId()
     {
         return $this->id;
@@ -102,19 +103,9 @@ class Task
         return $this->isDone;
     }
 
-    public function setIsDone(bool $isDone = false)
-    {
-        $this->isDone = $isDone;
-    }
-
     public function getTitle()
     {
         return $this->title;
-    }
-
-    public function setTitle(string $title)
-    {
-        $this->title = $title;
     }
 
     public function getDescription()
@@ -122,19 +113,9 @@ class Task
         return $this->desctiption;
     }
 
-    public function setDescription(string $description)
-    {
-        $this->desctiption = $description;
-    }
-
     public function getSubtasks()
     {
         return $this->subtasks;
-    }
-
-    public function setSubtasks(array $subtasks)
-    {
-        $this->subtasks = $subtasks;
     }
 
     public function getDueDate()
@@ -142,13 +123,35 @@ class Task
         return $this->dueDate;
     }
 
-    public function setDueDate(\DateTime $dueDate = null)
-    {
-        $this->dueDate = $dueDate;
-    }
-
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    // SETTERS
+
+    public function setIsDone(bool $isDone = false)
+    {
+        $this->isDone = $isDone;
+    }
+
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
+    }
+
+    public function setDescription(string $description)
+    {
+        $this->desctiption = $description;
+    }
+
+    public function setSubtasks(array $subtasks)
+    {
+        $this->subtasks = $subtasks;
+    }
+
+    public function setDueDate(\DateTime $dueDate = null)
+    {
+        $this->dueDate = $dueDate;
     }
 }

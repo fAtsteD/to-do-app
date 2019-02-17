@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,12 +12,22 @@ use App\Document\Task;
 use App\Form\AddTaskType;
 use App\Form\EditTask\EditTaskType;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * Main controller for app. It has root route.
  */
-class TodoController extends Controller
+class TodoController extends AbstractController
 {
+    /** @var ObjectManager $documentManager  */
+    private $documentManager;
+
+    public function __construct(ManagerRegistry $managerRegistry)
+    {
+        $this->documentManager = $managerRegistry->getManager();
+    }
+
     /**
      * Main page
      *
@@ -29,8 +38,7 @@ class TodoController extends Controller
      */
     public function todoList(Request $request)
     {
-        $documentManager = $this->get('doctrine_mongodb')
-            ->getManager();
+        $this->denyAccessUnlessGranted('ROLE_USER');
 
         $task = new Task();
         $addTaskForm = $this->createForm(AddTaskType::class, $task);
@@ -40,11 +48,11 @@ class TodoController extends Controller
         if ($addTaskForm->isSubmitted() && $addTaskForm->isValid()) {
             $task = $addTaskForm->getData();
 
-            $documentManager->persist($task);
-            $documentManager->flush();
+            $this->documentManager->persist($task);
+            $this->documentManager->flush();
         }
 
-        $repository = $documentManager->getRepository(Task::class);
+        $repository = $this->documentManager->getRepository(Task::class);
 
         $tasks = $repository->findAll();
 
@@ -68,9 +76,9 @@ class TodoController extends Controller
      */
     public function editTodo(Request $request, string $id)
     {
-        $documentManager = $this->get('doctrine_mongodb')
-            ->getManager();
-        $repository = $documentManager->getRepository(Task::class);
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $repository = $this->documentManager->getRepository(Task::class);
 
         $task = $repository->findOneById($id);
         if ($task == null) {
@@ -83,8 +91,8 @@ class TodoController extends Controller
         if ($editTaskForm->isSubmitted() && $editTaskForm->isValid()) {
             $task = $editTaskForm->getData();
 
-            $documentManager->persist($task);
-            $documentManager->flush();
+            $this->documentManager->persist($task);
+            $this->documentManager->flush();
 
             return $this->redirectToRoute('list_page');
         }
@@ -109,9 +117,9 @@ class TodoController extends Controller
      */
     public function delete(string $id)
     {
-        $documentManager = $this->get('doctrine_mongodb')
-            ->getManager();
-        $repository = $documentManager->getRepository(Task::class);
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $repository = $this->documentManager->getRepository(Task::class);
         $task = $repository->findOneById($id);
 
         if ($task == null) {
@@ -120,8 +128,8 @@ class TodoController extends Controller
                 'message' => 'The task is not found.'
             ]);
         } else {
-            $documentManager->remove($task);
-            $documentManager->flush();
+            $this->documentManager->remove($task);
+            $this->documentManager->flush();
 
             $response = new JsonResponse([
                 'code' => 0,
@@ -146,15 +154,15 @@ class TodoController extends Controller
      */
     public function taskDone(Request $request, string $id)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         if ($request->getContentType() == "json") {
             $response = new JsonResponse([
                 'code' => 2,
                 'message' => 'Wrong content type.'
             ]);
         } else {
-            $documentManager = $this->get('doctrine_mongodb')
-                ->getManager();
-            $task = $documentManager->getRepository(Task::class)->findOneById($id);
+            $task = $this->documentManager->getRepository(Task::class)->findOneById($id);
 
             if ($task == null) {
                 $response = new JsonResponse([
@@ -165,8 +173,8 @@ class TodoController extends Controller
                 $reqIsDone = json_decode($request->getContent(), true);
                 if (is_bool($reqIsDone["isDone"])) {
                     $task->setIsDone($reqIsDone["isDone"]);
-                    $documentManager->persist($task);
-                    $documentManager->flush();
+                    $this->documentManager->persist($task);
+                    $this->documentManager->flush();
 
                     $response = new JsonResponse([
                         'code' => 0,

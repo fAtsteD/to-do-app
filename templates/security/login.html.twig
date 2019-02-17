@@ -1,0 +1,39 @@
+{# Login form #}
+
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Sign in{% endblock %}
+
+{% block body %}
+<div class="mt-3">
+    <form method="post">
+        <div class="form-group col-lg-5 mx-auto">
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group col-lg-5 mx-auto">
+            <label for="inputUsername" class="sr-only">Username</label>
+            <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+        </div>
+        <div class="form-group col-lg-5 mx-auto">
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        </div>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <div class="form-group col-lg-5 mx-auto">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="_remember_me" id="checkbox_remember_me">
+                <label class="custom-control-label" for="checkbox_remember_me">Remember me</label>
+            </div>
+        </div>
+
+        <div class="form-group col-lg-5 mx-auto">
+            <button class="btn btn-primary" type="submit">Sign in</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

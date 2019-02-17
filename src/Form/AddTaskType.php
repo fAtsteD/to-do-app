@@ -7,6 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Document\Task;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Short form for create task
@@ -27,5 +29,12 @@ class AddTaskType extends AbstractType
             ->add('save', SubmitType::class, [
                 'label' => 'Create'
             ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => Task::class
+        ]);
     }
 }

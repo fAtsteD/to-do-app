@@ -1,22 +1,24 @@
 {# Render form for add task #}
 
-{{ form_start(addTaskForm, {'method': 'POST'}) }}
-    <div class="form-row align-items-center">
-        <div class="col-sm">
-            {{ form_row(addTaskForm.title, {'attr': {
-                'class': 'form-control',
-                'placeholder': 'What to do'
-            }}) }}
+<div class="mt-3 mb-3">
+    {{ form_start(addTaskForm, {'method': 'POST'}) }}
+        <div class="form-row align-items-center">
+            <div class="col-sm">
+                {{ form_row(addTaskForm.title, {'attr': {
+                    'class': 'form-control',
+                    'placeholder': 'What to do'
+                }}) }}
+            </div>
+            <div class="col-sm-auto">
+                {{ form_row(addTaskForm.dueDate, {'attr':{
+                    'class': 'form-control'
+                }}) }}
+            </div>
+            <div class="col-sm-auto">
+                {{ form_row(addTaskForm.save, {'attr':{
+                    'class': 'btn btn-primary'
+                }}) }} 
+            </div>
         </div>
-        <div class="col-sm-auto">
-            {{ form_row(addTaskForm.dueDate, {'attr':{
-                'class': 'form-control'
-            }}) }}
-        </div>
-        <div class="col-sm-auto">
-            {{ form_row(addTaskForm.save, {'attr':{
-                'class': 'btn btn-primary'
-            }}) }} 
-        </div>
-    </div>
-{{ form_end(addTaskForm) }}
+    {{ form_end(addTaskForm) }}
+</div>

@@ -1,0 +1,48 @@
+{# Registrate form #}
+
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Sign up{% endblock %}
+
+{% block body %}
+<div class="mt-3">
+    {{ form_start(registrateForm, {'method': 'POST'}) }}
+        <div class="form-group col-lg-5 mx-auto">
+            {{ form_row(registrateForm.username, {'attr': {
+                'class': 'form-control',
+                'placeholder': 'Username',
+                'autofocus': true
+            }}) }}
+        </div>
+        <div class="form-group col-lg-5 mx-auto">
+            {{ form_row(registrateForm.plainPassword.first, {'attr': {
+                'class': 'form-control',
+                'placeholder': 'Password'
+            }}) }}
+        </div>
+        <div class="form-group col-lg-5 mx-auto">
+            {{ form_row(registrateForm.plainPassword.second, {'attr': {
+                'class': 'form-control',
+                'placeholder': 'Repeat password'
+            }}) }}
+        </div>
+        <div class="form-group col-lg-5 mx-auto">
+            {{ form_row(registrateForm.email, {'attr': {
+                'class': 'form-control',
+                'placeholder': 'E-mail'
+            }}) }}
+        </div>
+        <div class="form-group col-lg-5 mx-auto">
+            {{ form_row(registrateForm.birthday, {'attr': {
+                'class': 'form-control',
+                'placeholder': 'Birthday'
+            }}) }}
+        </div>
+        <div class="form-group col-lg-5 mx-auto">
+            {{ form_row(registrateForm.submit, {'attr': {
+                'class': 'btn btn-primary'
+            }}) }}
+        </div>
+    {{ form_end(registrateForm) }}
+</div>
+{% endblock %}
