@@ -29,23 +29,28 @@ class Subtask
      *
      * @ODM\Field(type="string")
      * @Assert\Type(type="string")
+     * @Assert\Length(min=3, max=255)
      * @Assert\NotBlank
      */
     protected $title;
+
+    // GETTERS
 
     public function getIsDone()
     {
         return $this->isDone;
     }
 
-    public function setIsDone(bool $isDone = false)
-    {
-        $this->isDone = $isDone;
-    }
-
     public function getTitle()
     {
         return $this->title;
+    }
+
+    // SETTERS
+
+    public function setIsDone(bool $isDone = false)
+    {
+        $this->isDone = $isDone;
     }
 
     public function setTitle(string $title)

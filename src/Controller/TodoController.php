@@ -14,6 +14,9 @@ use App\Form\EditTask\EditTaskType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use App\Document\TasksList;
+use App\Form\AddListType;
 
 /**
  * Main controller for app. It has root route.
@@ -29,22 +32,60 @@ class TodoController extends AbstractController
     }
 
     /**
-     * Main page
+     * Show tasks for choosen list and lists. Render form for quick create task and list
      *
+     * @param Request $request
+     * @param string $listId
      * @return Response
      *
-     * @Route("/", name="list_page")
+     * @Route("/list/{listId}", name="list_page")
      * @Method({"GET", "POST"})
      */
-    public function todoList(Request $request)
+    public function todoList(Request $request, string $listId = null)
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        // Title for the page that is name of list
+        $titleView = '';
+
+        // Create task for form handle
         $task = new Task();
-        $addTaskForm = $this->createForm(AddTaskType::class, $task);
 
+        // List of tasks and list of lists
+        $taskRepository = $this->documentManager->getRepository(Task::class);
+        $listRepository = $this->documentManager->getRepository(TasksList::class);
+
+        // Find all tasks for the list. If the list does not set, open 'Inbox' list
+        $tasks = [];
+        if (!is_null($listId)) {
+            $tasks = $taskRepository->findBy(['listId' => $listId]);
+            $task->setListId($listId);
+        }
+
+        // If wrong id of list and did not find any task for current list than it returns tasks from 'Inbox'
+        $defaultlist = '';
+        if (count($tasks) == 0 || is_null($listId)) {
+            $defaultlist = $listRepository->findOneByTitle('Inbox');
+            $tasks = $taskRepository->findBy(['listId' => $defaultlist->getId()]);
+            $titleView = $defaultlist->getTitle();
+            $task->setListId($defaultlist->getId());
+        }
+
+        // Find all list for logged in user
+        $lists = $listRepository->findBy(['userId' => $this->getUser()->getId()]);
+
+        // Create list for add task form
+        $choicesList = [];
+        foreach ($lists as $value) {
+            if ($value->getId() == $listId && !is_null($listId)) {
+                $titleView = $value->getTitle();
+            }
+            $choicesList[$value->getTitle()] = $value->getId();
+        }
+        $addTaskForm = $this->createForm(AddTaskType::class, $task, ['choicesList' => $choicesList]);
+
+        // If form submitted and valid than safe task
         $addTaskForm->handleRequest($request);
-
         if ($addTaskForm->isSubmitted() && $addTaskForm->isValid()) {
             $task = $addTaskForm->getData();
 
@@ -52,26 +93,40 @@ class TodoController extends AbstractController
             $this->documentManager->flush();
         }
 
-        $repository = $this->documentManager->getRepository(Task::class);
+        // Create list form handle
+        $tasksList = new TasksList();
+        $addListForm = $this->createForm(AddListType::class, $tasksList);
 
-        $tasks = $repository->findAll();
+        // If form submitted and valid than safe list
+        $addListForm->handleRequest($request);
+        if ($addListForm->isSubmitted() && $addListForm->isValid()) {
+            $tasksList = $addListForm->getData();
+            $tasksList->setUserId($this->getUser()->getId());
+
+            $this->documentManager->persist($tasksList);
+            $this->documentManager->flush();
+        }
 
         $assetPackageJS = new PathPackage('/js', new EmptyVersionStrategy());
 
         return $this->render("todo/index.html.twig", [
             'addTaskForm' => $addTaskForm->createView(),
             'tasks' => $tasks,
-            'mainPageJS' => $assetPackageJS->getUrl('mainPage.js')
+            'mainPageJS' => $assetPackageJS->getUrl('mainPage.js'),
+            'lists' => $lists,
+            'addListForm' => $addListForm->createView(),
+            'title' => $titleView,
         ]);
     }
 
     /**
      * Edit task by id
      *
+     * @param Request $request
      * @param string $id
      * @return Response
      *
-     * @Route("edit/{id}", name="edit_task")
+     * @Route("tast/edit/{id}", name="edit_task")
      * @Method({"GET", "POST"})
      */
     public function editTodo(Request $request, string $id)
@@ -82,12 +137,25 @@ class TodoController extends AbstractController
 
         $task = $repository->findOneById($id);
         if ($task == null) {
-            throw $this->createNewFoundException('The task does not exist');
+            throw $this->createNotFoundException("The task $id does not exist");
         }
 
-        $editTaskForm = $this->createForm(EditTaskType::class, $task);
-        $editTaskForm->handleRequest($request);
+        // Create list for add task form
+        $lists = $this->documentManager
+            ->getRepository(TasksList::class)
+            ->findBy([
+                'userId' => $this->getUser()->getId()
+            ]);
+        $choicesList = [];
+        foreach ($lists as $value) {
+            $choicesList[$value->getTitle()] = $value->getId();
+        }
 
+        // Create form for edit task
+        $editTaskForm = $this->createForm(EditTaskType::class, $task, ['choicesList' => $choicesList]);
+
+        // If form submitted and valid than safe list
+        $editTaskForm->handleRequest($request);
         if ($editTaskForm->isSubmitted() && $editTaskForm->isValid()) {
             $task = $editTaskForm->getData();
 
@@ -97,6 +165,7 @@ class TodoController extends AbstractController
             return $this->redirectToRoute('list_page');
         }
 
+        // Additional JS files for handle forms data
         $assetPackageJS = new PathPackage('/js', new EmptyVersionStrategy());
 
         return $this->render("todo/editTask/index.html.twig", [
@@ -112,7 +181,7 @@ class TodoController extends AbstractController
      * @param string $id
      * @return Response
      * 
-     * @Route("delete/{id}", name="delete_task")
+     * @Route("task/delete/{id}", name="delete_task")
      * @Method({"POST"})
      */
     public function delete(string $id)
@@ -149,7 +218,7 @@ class TodoController extends AbstractController
      * @param string $id
      * @return Response
      * 
-     * @Route("check/{id}", name="check_task")
+     * @Route("task/check/{id}", name="check_task")
      * @Method({"POST"})
      */
     public function taskDone(Request $request, string $id)

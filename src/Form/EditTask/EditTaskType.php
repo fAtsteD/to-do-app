@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Document\Task;
 use App\Form\EditTask\SubtaskType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 /**
  * Form for edit task
@@ -22,12 +23,17 @@ class EditTaskType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->setMethod('POST')
             ->add('isDone', CheckboxType::class, [
                 'label' => false,
                 'required' => false
             ])
             ->add('title', TextType::class, [
                 'label' => false
+            ])
+            ->add('listId', ChoiceType::class, [
+                'label' => false,
+                'choices' => $options['choicesList'],
             ])
             ->add('dueDate', DateType::class, [
                 'label' => false,
@@ -52,7 +58,8 @@ class EditTaskType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Task::class
+            'data_class' => Task::class,
+            'choicesList' => [],
         ]);
     }
 }

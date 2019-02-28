@@ -2,17 +2,27 @@
 
 {% extends 'layouts/base.html.twig'%}
 
-{% block title %}
-    Name of list
-{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    {# Add to do form #}
-    {{ include("todo/inc/addTaskForm.html.twig") }}
-
-    {# Tasks with button for delete and edit #}
-    {{ include("todo/inc/tasks.html.twig") }}
-    
+    <div class="row">
+        <div class="col">
+            {# Add to do form #}
+            {{ include("todo/inc/addTaskForm.html.twig") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            {# Tasks with button for delete and edit #}
+            {{ include("todo/inc/tasks.html.twig") }}
+        </div>
+        <div class="col-lg-4">
+            {# Add name of lists #}
+            {{ include("list/lists.html.twig") }}
+            {# Add form for quick create new list #}
+            {{ include("list/addListForm.html.twig") }}
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}

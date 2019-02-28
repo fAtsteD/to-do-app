@@ -11,6 +11,9 @@ use App\Form\RegistrateType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Document\TasksList;
+use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use App\Security\LoginFormAuthenticator;
 
 /**
  * All actions is about security of app
@@ -55,11 +58,14 @@ class SecurityController extends AbstractController
      * Registrate user
      *
      * @param Request $request
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param GuardAuthenticatorHandler $guardAuthenticator
+     * @param LoginFormAuthenticator $authenticator
      * @return Response
      * 
      * @Route("/signup", name="registrate")
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardAuthenticator, LoginFormAuthenticator $authenticator)
     {
         // If user is logged in
         if ($this->isGranted("ROLE_USER")) {
@@ -75,9 +81,15 @@ class SecurityController extends AbstractController
             $user->setPassword($passwordEncoder->encodePassword($user, $registrateForm->get('plainPassword')->getData()));
 
             $this->documentManager->persist($user);
-            $this->documentManager->flush();
 
-            return $this->redirectToRoute('list_page');
+            // Create default list for tasks that must have all users
+            $defaultList = new TasksList();
+            $defaultList->setTitle('Inbox');
+            $defaultList->setUserId($user->getId());
+            $this->documentManager->persist($defaultList);
+
+            $this->documentManager->flush();
+            return $guardAuthenticator->authenticateUserAndHandleSuccess($user, $request, $authenticator, 'main');
         }
 
         return $this->render('security/registrate.html.twig', [

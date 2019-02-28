@@ -6,18 +6,12 @@
         {% if item.isDone == false %}
             <li class="mt-1 mb-1">
                 <div class="row">
-                    <div class="col-1">
-                        <label class="container-checkbox-task">
-                            <input type="checkbox" class="check-task" data-task-id="{{ item.id }}">
-                            <span class="checkmark-task form-control"></span>
-                        </label>
-                    </div>
-                    <div class="col">
-                        <a href="{{ path('edit_task', {'id': item.id}) }}" class="btn btn-outline-dark text-left col">{{ item.title }}</a>
-                    </div>
-                    <div class="col-1">
-                        <button type="button" class="remove-task btn btn-outline-danger" data-task-id="{{ item.id }}">X</button>
-                    </div>
+                    <label class="container-checkbox-task">
+                        <input type="checkbox" class="check-task" data-task-id="{{ item.id }}">
+                        <span class="checkmark-task form-control"></span>
+                    </label>
+                    <a href="{{ path('edit_task', {'id': item.id}) }}" class="btn btn-outline-dark text-left col">{{ item.title }}</a>
+                    <button type="button" class="remove-task btn btn-outline-danger" data-task-id="{{ item.id }}">X</button>
                 </div>
             </li>
         {% endif %}
@@ -29,18 +23,12 @@
         {% if item.isDone == true %}
             <li class="mt-1 mb-1">
                 <div class="row">
-                    <div class="col-1">
-                        <label class="container-checkbox-task">
-                            <input type="checkbox" class="check-task" data-task-id="{{ item.id }}" checked>
-                            <span class="checkmark-task form-control"></span>
-                        </label>
-                    </div>
-                    <div class="col">
-                        <a href="{{ path('edit_task', {'id': item.id}) }}" class="btn btn-outline-dark text-left col">{{ item.title }}</a>
-                    </div>
-                    <div class="col-1">
-                        <button type="button" class="remove-task btn btn-outline-danger" data-task-id="{{ item.id }}">X</button>
-                    </div>
+                    <label class="container-checkbox-task">
+                        <input type="checkbox" class="check-task" data-task-id="{{ item.id }}" checked>
+                        <span class="checkmark-task form-control"></span>
+                    </label>
+                    <a href="{{ path('edit_task', {'id': item.id}) }}" class="btn btn-outline-dark text-left col">{{ item.title }}</a>
+                    <button type="button" class="remove-task btn btn-outline-danger" data-task-id="{{ item.id }}">X</button>
                 </div>
             </li>
         {% endif %}

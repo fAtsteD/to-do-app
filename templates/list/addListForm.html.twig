@@ -1,0 +1,17 @@
+{# Render form for quick to create new list #}
+
+{{ form_start(addListForm) }}
+    <div class="form-row align-items-center">
+        <div class="col-sm">
+            {{ form_row(addListForm.title, {'attr': {
+                'class': 'form-control',
+                'placeholder': 'Name of list',
+            }}) }}
+        </div>
+        <div class="col-sm-auto">
+            {{ form_row(addListForm.save, {'attr':{
+                'class': 'btn btn-primary'
+            }}) }} 
+        </div>
+    </div>
+{{ form_end(addListForm) }}

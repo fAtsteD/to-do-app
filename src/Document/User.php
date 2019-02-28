@@ -29,7 +29,9 @@ class User implements UserInterface
      * 
      * @ODM\Field(type="string")
      * @ODM\UniqueIndex
-     * @Assert\Type(type="string")
+     * @Assert\Type("string")
+     * @Assert\Length(min=3, max=100)
+     * @Assert\Regex("/^[A-Za-z0-9]+$/", message="Username should have lower and upper case letters, numbers.")
      * @Assert\NotBlank
      */
     protected $username;
@@ -52,7 +54,7 @@ class User implements UserInterface
      * @var string
      * 
      * @ODM\Field(type="string")
-     * @Assert\Type(type="string")
+     * @Assert\Type("string")
      */
     protected $password;
 
@@ -72,7 +74,6 @@ class User implements UserInterface
      * @var \DateTime
      * 
      * @ODM\Field(type="date")
-     * @Assert\DateTime
      */
     protected $createdAt;
 

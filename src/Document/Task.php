@@ -28,7 +28,7 @@ class Task
      * @var bool
      *
      * @ODM\Field(type="boolean")
-     * @Assert\Type(type="bool")
+     * @Assert\Type("bool")
      */
     protected $isDone = false;
 
@@ -38,7 +38,8 @@ class Task
      * @var string
      *
      * @ODM\Field(type="string")
-     * @Assert\Type(type="string")
+     * @Assert\Type("string")
+     * @Assert\Length(min=3, max=255)
      * @Assert\NotBlank
      */
     protected $title;
@@ -49,7 +50,7 @@ class Task
      * @var string
      *
      * @ODM\Field(type="string")
-     * @Assert\Type(type="string")
+     * @Assert\Type("string")
      */
     protected $desctiption;
 
@@ -74,12 +75,20 @@ class Task
     protected $dueDate;
 
     /**
+     * Id of the list has this task
+     *
+     * @var string
+     * 
+     * @ODM\Field(type="string")
+     */
+    protected $listId;
+
+    /**
      * Date when task has been created.
      *
      * @var \DateTime
      *
      * @ODM\Field(type="date")
-     * @Assert\DateTime
      */
     protected $createdAt;
 
@@ -123,6 +132,11 @@ class Task
         return $this->dueDate;
     }
 
+    public function getListId()
+    {
+        return $this->listId;
+    }
+
     public function getCreatedAt()
     {
         return $this->createdAt;
@@ -153,5 +167,10 @@ class Task
     public function setDueDate(\DateTime $dueDate = null)
     {
         $this->dueDate = $dueDate;
+    }
+
+    public function setListId(string $listId)
+    {
+        $this->listId = $listId;
     }
 }

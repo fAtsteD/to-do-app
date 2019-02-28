@@ -1,0 +1,10 @@
+{# View all lists for current user #}
+
+<h4>Lists</h4>
+<ul class="list-unstyled">
+    {% for item in lists %}
+        <li>
+            <a href="{{ path('list_page', {'listId': item.id}) }}">{{ item.title }}</a>
+        </li>
+    {% endfor %}
+</ul>
