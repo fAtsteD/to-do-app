@@ -5,7 +5,7 @@ $(() => {
   $('button.remove-task').each(function () {
     $(this).on('click', function () {
       $.post({
-        url: '/delete/' + $(this).data('taskId'),
+        url: '/task/delete/' + $(this).data('taskId'),
         dataType: 'json',
         success: (data, textStatus) => {
           if (data.code == 0) {
@@ -20,13 +20,13 @@ $(() => {
 
   // Create click event for every checkbox of task. Action processes through JSON requests.
   $('input.check-task').each(function () {
-    $(this).on('click', function() {
+    $(this).on('click', function () {
       var sendData = {
         id: $(this).data('taskId'),
         isDone: $('input.check-task').is(':checked')
       };
       $.post({
-        url: '/check/' + $(this).data('taskId'),
+        url: '/task/check/' + $(this).data('taskId'),
         data: JSON.stringify(sendData),
         dataType: 'json',
         success: (data, textStatus) => {

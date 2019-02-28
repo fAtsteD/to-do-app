@@ -65,7 +65,10 @@ class TodoController extends AbstractController
         // If wrong id of list and did not find any task for current list than it returns tasks from 'Inbox'
         $defaultlist = '';
         if (count($tasks) == 0 || is_null($listId)) {
-            $defaultlist = $listRepository->findOneByTitle('Inbox');
+            $defaultlist = $listRepository->findOneBy([
+                'title' => 'Inbox',
+                'userId' => $this->getUser()->getId(),
+            ]);
             $tasks = $taskRepository->findBy(['listId' => $defaultlist->getId()]);
             $titleView = $defaultlist->getTitle();
             $task->setListId($defaultlist->getId());
@@ -112,7 +115,7 @@ class TodoController extends AbstractController
         return $this->render("todo/index.html.twig", [
             'addTaskForm' => $addTaskForm->createView(),
             'tasks' => $tasks,
-            'mainPageJS' => $assetPackageJS->getUrl('mainPage.js'),
+            'mainPageJS' => $assetPackageJS->getUrl('listPage.js'),
             'lists' => $lists,
             'addListForm' => $addListForm->createView(),
             'title' => $titleView,
