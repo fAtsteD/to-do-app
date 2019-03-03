@@ -55,23 +55,18 @@ class TodoController extends AbstractController
         $taskRepository = $this->documentManager->getRepository(Task::class);
         $listRepository = $this->documentManager->getRepository(TasksList::class);
 
-        // Find all tasks for the list. If the list does not set, open 'Inbox' list
-        $tasks = [];
-        if (!is_null($listId)) {
-            $tasks = $taskRepository->findBy(['listId' => $listId]);
-            $task->setListId($listId);
-        }
+        // Create list form handle
+        $tasksList = new TasksList();
+        $addListForm = $this->createForm(AddListType::class, $tasksList);
 
-        // If wrong id of list and did not find any task for current list than it returns tasks from 'Inbox'
-        $defaultlist = '';
-        if (count($tasks) == 0 || is_null($listId)) {
-            $defaultlist = $listRepository->findOneBy([
-                'title' => 'Inbox',
-                'userId' => $this->getUser()->getId(),
-            ]);
-            $tasks = $taskRepository->findBy(['listId' => $defaultlist->getId()]);
-            $titleView = $defaultlist->getTitle();
-            $task->setListId($defaultlist->getId());
+        // If form submitted and valid than safe list
+        $addListForm->handleRequest($request);
+        if ($addListForm->isSubmitted() && $addListForm->isValid()) {
+            $tasksList = $addListForm->getData();
+            $tasksList->setUserId($this->getUser()->getId());
+
+            $this->documentManager->persist($tasksList);
+            $this->documentManager->flush();
         }
 
         // Find all list for logged in user
@@ -96,18 +91,23 @@ class TodoController extends AbstractController
             $this->documentManager->flush();
         }
 
-        // Create list form handle
-        $tasksList = new TasksList();
-        $addListForm = $this->createForm(AddListType::class, $tasksList);
+        // Find all tasks for the list. If the list does not set, open 'Inbox' list
+        $tasks = [];
+        if (!is_null($listId)) {
+            $tasks = $taskRepository->findBy(['listId' => $listId]);
+            $task->setListId($listId);
+        }
 
-        // If form submitted and valid than safe list
-        $addListForm->handleRequest($request);
-        if ($addListForm->isSubmitted() && $addListForm->isValid()) {
-            $tasksList = $addListForm->getData();
-            $tasksList->setUserId($this->getUser()->getId());
-
-            $this->documentManager->persist($tasksList);
-            $this->documentManager->flush();
+        // If wrong id of list and did not find any task for current list than it returns tasks from 'Inbox'
+        $defaultlist = '';
+        if (count($tasks) == 0 || is_null($listId)) {
+            $defaultlist = $listRepository->findOneBy([
+                'title' => 'Inbox',
+                'userId' => $this->getUser()->getId(),
+            ]);
+            $tasks = $taskRepository->findBy(['listId' => $defaultlist->getId()]);
+            $titleView = $defaultlist->getTitle();
+            $task->setListId($defaultlist->getId());
         }
 
         $assetPackageJS = new PathPackage('/js', new EmptyVersionStrategy());
@@ -205,7 +205,7 @@ class TodoController extends AbstractController
 
             $response = new JsonResponse([
                 'code' => 0,
-                'message' => 'The task is deleted.'
+                'message' => 'The task was deleted.'
             ]);
         }
 

@@ -4,7 +4,12 @@
 <ul class="list-unstyled">
     {% for item in lists %}
         <li>
-            <a href="{{ path('list_page', {'listId': item.id}) }}">{{ item.title }}</a>
+            <div class="row">
+                <a href="{{ path('list_page', {'listId': item.id}) }}" class="col">{{ item.title }}</a>
+                <div class="col-2 text-right">
+                    <button type="button" class="remove-list btn btn-outline-danger btn-sm" data-list-id="{{ item.id }}">X</button>
+                </div>
+            </div>
         </li>
     {% endfor %}
 </ul>
