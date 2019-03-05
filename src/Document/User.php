@@ -14,6 +14,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 class User implements UserInterface
 {
     /**
+     * Roles in the app. Database has number of role.
+     */
+    const ROLE_USERS = [
+        1 => 'ROLE_USER', // default role for all user, must have always
+    ];
+
+    /**
      * ID of user
      *
      * @var string
@@ -59,6 +66,15 @@ class User implements UserInterface
     protected $password;
 
     /**
+     * Role of user
+     *
+     * @var int
+     * 
+     * @ODM\Field(type="int")
+     */
+    protected $role;
+
+    /**
      * Birthday of user
      *
      * @var \DateTime
@@ -80,6 +96,7 @@ class User implements UserInterface
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->role = array_search('ROLE_USER', self::ROLE_USERS);
     }
 
     public function eraseCredentials()
@@ -109,7 +126,7 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        return ['ROLE_USER'];
+        return [self::ROLE_USERS[$this->role]];
     }
 
     // Using bcrypt. That method has to be return null.
@@ -143,6 +160,11 @@ class User implements UserInterface
     public function setPassword(string $password)
     {
         $this->password = $password;
+    }
+
+    public function setRoles(string $role)
+    {
+        $this->role = array_search((in_array($role, self::ROLE_USERS) ? $role : 'ROLE_USER'), self::ROLE_USERS);
     }
 
     public function setBirthday(\DateTime $birthday)
