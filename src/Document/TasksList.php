@@ -35,13 +35,31 @@ class TasksList
     protected $title;
 
     /**
-     * Id of user is owned the list
+     * Id of user is created the list
      *
      * @var string
      * 
      * @ODM\Field(type="string")
      */
-    protected $userId;
+    protected $createdUserId;
+
+    /**
+     * Id of user view the list
+     *
+     * @var array
+     * 
+     * @ODM\Field(type="collection")
+     */
+    protected $viewUserIds;
+
+    /**
+     * Id of user can edit the list
+     *
+     * @var array
+     * 
+     * @ODM\Field(type="collection")
+     */
+    protected $editUserIds;
 
     /**
      * Date when task has been created.
@@ -72,9 +90,19 @@ class TasksList
         return $this->title;
     }
 
-    public function getUserId()
+    public function getCreatedUserId()
     {
-        return $this->userId;
+        return $this->createdUserId;
+    }
+
+    public function getViewUserIds()
+    {
+        return $this->viewUserIds;
+    }
+
+    public function getEditUserIds()
+    {
+        return $this->editUserIds;
     }
 
     public function getCreatedAt()
@@ -89,8 +117,18 @@ class TasksList
         $this->title = $title;
     }
 
-    public function setUserId(string $userId)
+    public function setCreatedUserId(string $userId)
     {
-        $this->userId = $userId;
+        $this->createdUserId = $userId;
+    }
+
+    public function setViewUserId(string $userId)
+    {
+        $this->viewUserId = $userId;
+    }
+
+    public function setEditUserId(string $userId)
+    {
+        $this->editUserId = $userId;
     }
 }

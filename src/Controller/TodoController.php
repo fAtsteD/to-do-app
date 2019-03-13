@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use App\Document\TasksList;
 use App\Form\AddListType;
+use App\Security\Voters\ListVoter;
 
 /**
  * Main controller for app. It has root route.
@@ -43,6 +44,7 @@ class TodoController extends AbstractController
      */
     public function todoList(Request $request, string $listId = null)
     {
+        // Check if user is logged in
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         // Title for the page that is name of list
@@ -55,6 +57,28 @@ class TodoController extends AbstractController
         $taskRepository = $this->documentManager->getRepository(Task::class);
         $listRepository = $this->documentManager->getRepository(TasksList::class);
 
+        // Find all tasks for the list. If the list does not set, open 'Inbox' list
+        $tasks = [];
+        if (!is_null($listId)) {
+            $tasks = $taskRepository->findBy(['listId' => $listId]);
+            $task->setListId($listId);
+        }
+
+        // If wrong id of list and did not find any task for current list than it returns tasks from 'Inbox'
+        $defaultlist = null;
+        if (count($tasks) == 0 || is_null($listId)) {
+            $defaultlist = $listRepository->findOneBy([
+                'title' => 'Inbox',
+                'createdUserId' => $this->getUser()->getId(),
+            ]);
+            $tasks = $taskRepository->findBy(['listId' => $defaultlist->getId()]);
+            $titleView = $defaultlist->getTitle();
+            $task->setListId($defaultlist->getId());
+        }
+
+        // Check if user has permission for view
+        $this->denyAccessUnlessGranted(ListVoter::VIEW, is_null($defaultlist) ? $listRepository->findOneById($listId) : $defaultlist);
+
         // Create list form handle
         $tasksList = new TasksList();
         $addListForm = $this->createForm(AddListType::class, $tasksList);
@@ -63,14 +87,18 @@ class TodoController extends AbstractController
         $addListForm->handleRequest($request);
         if ($addListForm->isSubmitted() && $addListForm->isValid()) {
             $tasksList = $addListForm->getData();
-            $tasksList->setUserId($this->getUser()->getId());
+            $tasksList->setCreatedUserId($this->getUser()->getId());
 
             $this->documentManager->persist($tasksList);
             $this->documentManager->flush();
         }
 
         // Find all list for logged in user
-        $lists = $listRepository->findBy(['userId' => $this->getUser()->getId()]);
+        $lists = $listRepository->findBy([
+            'createdUserId' => $this->getUser()->getId(),
+            'viewUserId' => $this->getUser()->getId(),
+            'editUserId' => $this->getUser()->getId(),
+        ]);
 
         // Create list for add task form
         $choicesList = [];
@@ -89,25 +117,6 @@ class TodoController extends AbstractController
 
             $this->documentManager->persist($task);
             $this->documentManager->flush();
-        }
-
-        // Find all tasks for the list. If the list does not set, open 'Inbox' list
-        $tasks = [];
-        if (!is_null($listId)) {
-            $tasks = $taskRepository->findBy(['listId' => $listId]);
-            $task->setListId($listId);
-        }
-
-        // If wrong id of list and did not find any task for current list than it returns tasks from 'Inbox'
-        $defaultlist = '';
-        if (count($tasks) == 0 || is_null($listId)) {
-            $defaultlist = $listRepository->findOneBy([
-                'title' => 'Inbox',
-                'userId' => $this->getUser()->getId(),
-            ]);
-            $tasks = $taskRepository->findBy(['listId' => $defaultlist->getId()]);
-            $titleView = $defaultlist->getTitle();
-            $task->setListId($defaultlist->getId());
         }
 
         $assetPackageJS = new PathPackage('/js', new EmptyVersionStrategy());
@@ -147,7 +156,8 @@ class TodoController extends AbstractController
         $lists = $this->documentManager
             ->getRepository(TasksList::class)
             ->findBy([
-                'userId' => $this->getUser()->getId()
+                'createdUserId' => $this->getUser()->getId(),
+                'editUserId' => $this->getUser()->getId(),
             ]);
         $choicesList = [];
         foreach ($lists as $value) {

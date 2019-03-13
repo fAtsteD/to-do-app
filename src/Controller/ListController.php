@@ -10,6 +10,8 @@ use App\Document\TasksList;
 use App\Form\AddListType;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use App\Document\Task;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Security\Voters\ListVoter;
 
 /**
  * Handle actions about lists
@@ -47,15 +49,24 @@ class ListController extends AbstractController
      */
     public function delete(string $listId)
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        // Get object of list by id
+        $list = $this->documentManager
+            ->getRepository(TasksList::class)
+            ->findOneById($listId);
+
+        if (is_null($list)) {
+            return $this->json([
+                'code' => 1,
+                'message' => "The list id $listId is wrong."
+            ]);
+        }
+
+        // If use can not delete
+        $this->denyAccessUnlessGranted(ListVoter::DELETE, $list);
 
         // Delete list
-        $this->documentManager
-            ->createQueryBuilder(TasksList::class)
-            ->remove()
-            ->field('id')->equals($listId)
-            ->getQuery()
-            ->execute();
+        $this->documentManager->remove($list);
+        $this->documentManager->flush();
 
         // Delete tasks from list
         $this->documentManager

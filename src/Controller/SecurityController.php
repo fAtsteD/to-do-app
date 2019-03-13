@@ -85,7 +85,7 @@ class SecurityController extends AbstractController
             // Create default list for tasks that must have all users
             $defaultList = new TasksList();
             $defaultList->setTitle('Inbox');
-            $defaultList->setUserId($user->getId());
+            $defaultList->setCreatedUserId($user->getId());
             $this->documentManager->persist($defaultList);
 
             $this->documentManager->flush();
