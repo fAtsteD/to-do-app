@@ -94,11 +94,7 @@ class TodoController extends AbstractController
         }
 
         // Find all list for logged in user
-        $lists = $listRepository->findBy([
-            'createdUserId' => $this->getUser()->getId(),
-            'viewUserId' => $this->getUser()->getId(),
-            'editUserId' => $this->getUser()->getId(),
-        ]);
+        $lists = $listRepository->findViewLists($this->getUser());
 
         // Create list for add task form
         $choicesList = [];
@@ -155,10 +151,7 @@ class TodoController extends AbstractController
         // Create list for add task form
         $lists = $this->documentManager
             ->getRepository(TasksList::class)
-            ->findBy([
-                'createdUserId' => $this->getUser()->getId(),
-                'editUserId' => $this->getUser()->getId(),
-            ]);
+            ->findEditLists($this->getUser());
         $choicesList = [];
         foreach ($lists as $value) {
             $choicesList[$value->getTitle()] = $value->getId();

@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * List of tasks. All tasks have to be belonged to lists.
  * 
- * @ODM\Document
+ * @ODM\Document(repositoryClass="App\Repository\TasksListRepository")
  * @ODM\UniqueIndex(keys={"userId", "taskId"})
  */
 class TasksList
