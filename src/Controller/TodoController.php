@@ -139,19 +139,24 @@ class TodoController extends AbstractController
      */
     public function editTodo(Request $request, string $id)
     {
+        // Check if user is logged in
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $repository = $this->documentManager->getRepository(Task::class);
+        $taskRepository = $this->documentManager->getRepository(Task::class);
+        $listRepository = $this->documentManager->getRepository(TasksList::class);
 
-        $task = $repository->findOneById($id);
+        // Find the task by id
+        $task = $taskRepository->findOneById($id);
         if ($task == null) {
             throw $this->createNotFoundException("The task $id does not exist");
         }
 
+        // Check permission for edit todo
+        $listOfTask = $listRepository->findOneById($task->getListId());
+        $this->denyAccessUnlessGranted(ListVoter::EDIT, $listOfTask);
+
         // Create list for add task form
-        $lists = $this->documentManager
-            ->getRepository(TasksList::class)
-            ->findEditLists($this->getUser());
+        $lists = $listRepository->findEditLists($this->getUser());
         $choicesList = [];
         foreach ($lists as $value) {
             $choicesList[$value->getTitle()] = $value->getId();
@@ -192,10 +197,16 @@ class TodoController extends AbstractController
      */
     public function delete(string $id)
     {
+        // Check if user is logged in
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $repository = $this->documentManager->getRepository(Task::class);
-        $task = $repository->findOneById($id);
+        $taskRepository = $this->documentManager->getRepository(Task::class);
+        $task = $taskRepository->findOneById($id);
+
+        // Check permission for delete todo
+        $listRepository = $this->documentManager->getRepository(TasksList::class);
+        $listOfTask = $listRepository->findOneById($task->getListId());
+        $this->denyAccessUnlessGranted(ListVoter::DELETE, $listOfTask);
 
         if ($task == null) {
             $response = new JsonResponse([
@@ -229,15 +240,23 @@ class TodoController extends AbstractController
      */
     public function taskDone(Request $request, string $id)
     {
+        // Check if user is logged in
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        // Check for right type of request
         if ($request->getContentType() == "json") {
             $response = new JsonResponse([
                 'code' => 2,
                 'message' => 'Wrong content type.'
             ]);
         } else {
+            // Find the task
             $task = $this->documentManager->getRepository(Task::class)->findOneById($id);
+
+            // Check permission for edit todo
+            $listRepository = $this->documentManager->getRepository(TasksList::class);
+            $listOfTask = $listRepository->findOneById($task->getListId());
+            $this->denyAccessUnlessGranted(ListVoter::EDIT, $listOfTask);
 
             if ($task == null) {
                 $response = new JsonResponse([
