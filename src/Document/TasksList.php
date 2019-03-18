@@ -122,13 +122,13 @@ class TasksList
         $this->createdUserId = $userId;
     }
 
-    public function setViewUserId(string $userId)
+    public function setViewUserIds(array $userIds)
     {
-        $this->viewUserId = $userId;
+        $this->viewUserIds = $userIds;
     }
 
-    public function setEditUserId(string $userId)
+    public function setEditUserIds(array $userIds)
     {
-        $this->editUserId = $userId;
+        $this->editUserIds = $userIds;
     }
 }
