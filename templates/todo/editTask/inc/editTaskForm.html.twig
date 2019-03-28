@@ -11,20 +11,20 @@
         
         <div class="form-group col">
             {{ form_row(editTaskForm.title, {'attr': {
-            'class': 'form-control',
-            'placeholder': 'What to do'
+                'class': 'form-control',
+                'placeholder': 'What to do'
             }}) }}
         </div>
     </div>
 
     <div class="form-group">
-        {{ form_row(editTaskForm.listId, {'attr':{
+        {{ form_row(editTaskForm.listId, {'attr': {
             'class': 'form-control'
         }}) }}
     </div>
 
     <div class="form-group">
-        {{ form_row(editTaskForm.dueDate, {'attr':{
+        {{ form_row(editTaskForm.dueDate, {'attr': {
             'class': 'form-control'
         }}) }}
     </div>
@@ -47,11 +47,6 @@
                                 "placeholder": "What to do"
                             }}) }}
                         </div>
-
-                        
-                        <div class="col-1 text-right">
-                            <button type="button" class="remove-subtask btn btn-danger">X</button>
-                        </div>
                     </div>
                 </li>
             {% endfor %}
@@ -59,12 +54,12 @@
     </div>
 
     <div class="form-group">
-        {{ form_row(editTaskForm.description, {'attr':{
+        {{ form_row(editTaskForm.description, {'attr': {
             'class': 'form-control'
         }}) }}
     </div>
 
-    {{ form_row(editTaskForm.save, {'attr':{
+    {{ form_row(editTaskForm.save, {'attr': {
         'class': 'btn btn-primary float-right'
     }}) }}
 {{ form_end(editTaskForm) }}

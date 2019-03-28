@@ -3,54 +3,57 @@
 
 var collectionHolder = $('ul.subtasks');
 var addSubtasksButton = $('<button type="button" id="add_subtask_link" class="btn btn-outline-success">+</button>');
-var newLinkLi = $('<li></li>').append(addSubtasksButton);
+var newSubtaskLi = $('<li></li>').append(addSubtasksButton);
 
 $(() => {
-  collectionHolder.append(newLinkLi);
+  // Set insex for future elements
   collectionHolder.data('index', collectionHolder.find(':input').length);
 
+  // Add event for adding subtask button
   addSubtasksButton.on('click', () => {
-    addSubtaskForm(collectionHolder, newLinkLi);
+    addSubtaskForm();
   });
-  
-  // Add event click to all buttons for deleting existing subtasks
-  $('button.remove-subtask').each(function (index) {
-    $(this).on('click', function () {
-      $(this).parent().parent().parent().remove();
-    });
+
+  // Add delete delete button to the end of each li
+  collectionHolder.find('li').each(function (index) {
+    $(this).children().append(createDeleteButton());
   });
+
+  // Add new li element in the end with add button
+  collectionHolder.append(newSubtaskLi);
 });
 
 /**
  * Add subtask form to the list in form of edit task
- * @param  $collectionHolder 
- * @param newLinkLi 
  */
-function addSubtaskForm(collectionHolder, newLinkLi) {
-  var prototype = collectionHolder.data('prototype');
+function addSubtaskForm() {
+  var newForm = collectionHolder.data('prototype');
   var index = collectionHolder.data('index');
-  var newForm = prototype;
 
+  // Add index to form
   newForm = newForm.replace(/__name__/gm, index);
   collectionHolder.data('index', index + 1);
-  var newFormLi = $('<li></li>').append(newForm);
-  addDeleteLinkSubtask(newFormLi.find('div.form-row'));
-  newLinkLi.before(newFormLi);
+
+  // Create new li and add new form
+  var newLi = $('<li></li>').append(newForm);
+
+  // Add delete button for form
+  newLi.children().append(createDeleteButton());
+
+  // Insert form in the end but in front of adding button
+  newSubtaskLi.before(newLi);
 }
 
 /**
- * Add link for remove subtask
- * @param subtaskFormLi
+ * Add button to form in li. Li object has to the parent
  */
-function addDeleteLinkSubtask(subtaskFormLi) {
-  var removeButton = $('<div class="col-1"><button type="button" class="remove-subtask btn btn-danger">X</button></div>');
-  subtaskFormLi.append(removeButton);
+function createDeleteButton() {
+  var deleteSubtaskButton = $('<div><button type="button" class="remove-subtask btn btn-danger">X</button></div>');
 
-  removeButton.on('click', () => {
-    subtaskFormLi.parent().remove();
+  // Add click event for button
+  deleteSubtaskButton.children().on('click', () => {
+    deleteSubtaskButton.parent().remove();
   });
-}
 
-function deleteTask() {
-  
+  return deleteSubtaskButton;
 }
