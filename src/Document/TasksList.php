@@ -50,7 +50,7 @@ class TasksList
      * 
      * @ODM\Field(type="collection")
      */
-    protected $viewUserIds;
+    protected $viewUserIds = [];
 
     /**
      * Id of user can edit the list
@@ -59,7 +59,7 @@ class TasksList
      * 
      * @ODM\Field(type="collection")
      */
-    protected $editUserIds;
+    protected $editUserIds = [];
 
     /**
      * Date when task has been created.

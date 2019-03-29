@@ -14,7 +14,6 @@ use App\Form\EditTask\EditTaskType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use App\Document\TasksList;
 use App\Form\AddListType;
 use App\Security\Voters\ListVoter;
@@ -39,7 +38,7 @@ class TodoController extends AbstractController
      * @param string $listId
      * @return Response
      *
-     * @Route("/list/{listId}", name="list_page")
+     * @Route("/list/show/{listId}", name="list_page")
      * @Method({"GET", "POST"})
      */
     public function todoList(Request $request, string $listId = null)
@@ -53,7 +52,7 @@ class TodoController extends AbstractController
         // Create task for form handle
         $task = new Task();
 
-        // List of tasks and list of lists
+        // Repositories
         $taskRepository = $this->documentManager->getRepository(Task::class);
         $listRepository = $this->documentManager->getRepository(TasksList::class);
 
@@ -180,9 +179,10 @@ class TodoController extends AbstractController
         $assetPackageJS = new PathPackage('/js', new EmptyVersionStrategy());
 
         return $this->render("todo/editTask/index.html.twig", [
+            'title' => 'Edit task',
             'editTaskForm' => $editTaskForm->createView(),
             'task' => $task,
-            'editTaskJS' => $assetPackageJS->getUrl('editTask.js')
+            'editTaskJS' => $assetPackageJS->getUrl('editTask.js'),
         ]);
     }
 

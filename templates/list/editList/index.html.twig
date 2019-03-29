@@ -1,0 +1,16 @@
+{# Page for edit list #}
+
+{% extends 'layouts/base.html.twig'%}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="mt-3">
+        {{ include('list/editList/inc/editListForm.html.twig') }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {# Add javascript #}
+    <script src="{% if editListJS is defined %}{{ editListJS }}{% endif %}"></script>
+{% endblock %}

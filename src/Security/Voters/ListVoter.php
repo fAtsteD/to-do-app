@@ -49,9 +49,12 @@ class ListVoter extends Voter
         // Check each attribute
         switch ($attribute) {
             case self::VIEW:
-                return $this->isOwner($list, $user) || $this->canView($list, $user) || $this->canEdit($list, $user);
+                return $this->isOwner($list, $user) ||
+                    $this->canView($list, $user) ||
+                    $this->canEdit($list, $user);
             case self::EDIT:
-                return $this->isOwner($list, $user) || $this->canEdit($list, $user);
+                return $this->isOwner($list, $user) ||
+                    $this->canEdit($list, $user);
             case self::DELETE:
                 return $this->isOwner($list, $user);
             default:
@@ -93,5 +96,21 @@ class ListVoter extends Voter
     private function canEdit(TasksList $list, User $user)
     {
         return in_array($user->getId(), $list->getEditUserIds(), true);
+    }
+
+    /**
+     * User cannot delete or edit special lists
+     *
+     * @param TasksList $list
+     * @return bool
+     */
+    private function isListNotEditAndDelete(TasksList $list)
+    {
+        // Array of list that cannot delte or edit
+        $cannotEditAndDelete = [
+            'Inbox',
+        ];
+
+        return in_array($list->getTitle(), $cannotEditAndDelete, true);
     }
 }

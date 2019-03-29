@@ -1,0 +1,41 @@
+{# Edit list form #}
+
+{{ form_start(editListForm) }}
+    <div class="form-group">
+        {{ form_row(editListForm.title, {'attr': {
+            'class': 'form-control',
+            'placeholder': 'Name of list',
+        }})}}
+    </div>
+    
+    <p>Created by {{ listModel.createdUser.username }}</p>
+
+    <div class="form-group">
+        {# Input for each user for this task and permissions #}
+        <ul class="users list-unstyled" data-prototype='{{ include('list/editList/inc/editUserListForm.html.twig') }}'>
+            {% for userList in editListForm.users %}
+                <li>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            {{ form_row(userList.username, {"attr": {
+                                "class": "form-control",
+                                "placeholder": "Username",
+                            }})}}
+                        </div>
+
+                        <div class="form-group col-3">
+                            {{ form_row(userList.permission, {"attr": {
+                                "class": "form-control",
+                            }})}}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {{ form_row(editListForm.save, {'attr': {
+        'class': 'btn btn-primary float-right',
+    }})}}
+
+{{ form_end(editListForm) }}
