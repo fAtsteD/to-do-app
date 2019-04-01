@@ -71,12 +71,14 @@ class TodoController extends AbstractController
                 'createdUserId' => $this->getUser()->getId(),
             ]);
             $tasks = $taskRepository->findBy(['listId' => $defaultlist->getId()]);
-            $titleView = $defaultlist->getTitle();
             $task->setListId($defaultlist->getId());
+
+            // If using default list
+            $listId = $defaultlist->getId();
         }
 
         // Check if user has permission for view
-        $this->denyAccessUnlessGranted(ListVoter::VIEW, is_null($defaultlist) ? $listRepository->findOneById($listId) : $defaultlist);
+        $this->denyAccessUnlessGranted(ListVoter::VIEW, $listRepository->findOneById($listId));
 
         // Create list form handle
         $tasksList = new TasksList();
@@ -112,6 +114,9 @@ class TodoController extends AbstractController
 
             $this->documentManager->persist($task);
             $this->documentManager->flush();
+
+            // Renew list of tasks after saving
+            $tasks = $taskRepository->findBy(['listId' => $listId]);
         }
 
         $assetPackageJS = new PathPackage('/js', new EmptyVersionStrategy());

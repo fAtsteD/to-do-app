@@ -33,9 +33,9 @@ $(() => {
         success: (data, textStatus) => {
           if (data.code == 0) {
             if (sendData.isDone) {
-              $('ul#done-tasks').append($(this).parent().parent().parent().parent());
+              $('ul#done-tasks').append($(this).parent().parent().parent());
             } else {
-              $('ul#undone-tasks').append($(this).parent().parent().parent().parent());
+              $('ul#undone-tasks').append($(this).parent().parent().parent());
             }
           } else {
             console.log('Error ' + data.code + ': ' + data.message);
@@ -49,26 +49,26 @@ $(() => {
   // Create click event for every button of remove list
   $('button.remove-list').each(function () {
     $(this).on('click', function () {
-      // TODO: Confirm delete
-      fetch('/list/delete/' + $(this).data('listId'), {
-        'method': 'DELETE'
-      }).then(function (response) {
-        if (response.status == 200) {
-          return response.json();
-        } else {
-          alert('Error through delete list.');
-          return;
-        }
-      }).then(function (response) {
-        if (response.code == 0) {
-          // FIXME: Do not work delete
-          $(this).parent().remove();
-          console.log(response.message);
-        } else {
-          console.log('Error ' + response.code + ': ' + response.message);
-          alert('Error through delete list.');
-        }
-      });
+      if (confirm('Are you sure for deleting this task?')) {
+        fetch('/list/delete/' + $(this).data('listId'), {
+          'method': 'DELETE'
+        }).then(function (response) {
+          if (response.status == 200) {
+            return response.json();
+          } else {
+            alert('Error through delete list.');
+            return;
+          }
+        }).then(function (response) {
+          if (response.code == 0) {
+            $(this).parent().parent().remove();
+            console.log(response.message);
+          } else {
+            console.log('Error ' + response.code + ': ' + response.message);
+            alert('Error through delete list.');
+          }
+        });
+      }
     });
   });
 });
