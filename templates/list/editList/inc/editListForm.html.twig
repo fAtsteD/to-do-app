@@ -2,7 +2,7 @@
 
 {{ form_start(editListForm) }}
     <div class="form-group">
-        {{ form_row(editListForm.title, {'attr': {
+        {{ form_widget(editListForm.title, {'attr': {
             'class': 'form-control',
             'placeholder': 'Name of list',
         }})}}
@@ -17,14 +17,14 @@
                 <li>
                     <div class="form-row">
                         <div class="form-group col">
-                            {{ form_row(userList.username, {"attr": {
+                            {{ form_widget(userList.username, {"attr": {
                                 "class": "form-control",
                                 "placeholder": "Username",
                             }})}}
                         </div>
 
                         <div class="form-group col-3">
-                            {{ form_row(userList.permission, {"attr": {
+                            {{ form_widget(userList.permission, {"attr": {
                                 "class": "form-control",
                             }})}}
                         </div>

@@ -2,14 +2,14 @@
 
 <div class="form-row">
     <div class="form-group col">
-        {{ form_row(editListForm.users.vars.prototype.username, {"attr": {
+        {{ form_widget(editListForm.users.vars.prototype.username, {"attr": {
             "class": "form-control",
             "placeholder": "Username",
         }})}}
     </div>
 
     <div class="form-group col-3">
-        {{ form_row(editListForm.users.vars.prototype.permission, {"attr": {
+        {{ form_widget(editListForm.users.vars.prototype.permission, {"attr": {
             "class": "form-control",
         }})}}
     </div>
